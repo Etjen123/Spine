@@ -178,7 +178,13 @@ open class JSONAPIRouter: Router {
 
 		// Compose URL
 		if !queryItems.isEmpty {
-			urlComponents.queryItems = queryItems
+      			var cs = CharacterSet.urlQueryAllowed
+      			cs.remove("+")
+      
+      			urlComponents.percentEncodedQuery = queryItems.map {
+        			$0.name.addingPercentEncoding(withAllowedCharacters: cs)!
+          			+ "=" + ($0.value ?? "").addingPercentEncoding(withAllowedCharacters: cs)!
+        			}.joined(separator: "&")
 		}
 		
 		return urlComponents.url!
